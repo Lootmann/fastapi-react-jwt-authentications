@@ -7,14 +7,15 @@ from api.routers.users import router as user_router
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://0.0.0.0:3000",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credential=True,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
