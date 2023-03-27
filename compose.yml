@@ -34,6 +34,21 @@ services:
       - target: 5432
         published: 5432
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: npm run dev
+    container_name: react-frontend
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /usr/frontend
+    ports:
+      - published: 3000
+        target: 3000
+    tty: true
+
 volumes:
   postgres-volume:
     name: refresh-token-fastapi-react

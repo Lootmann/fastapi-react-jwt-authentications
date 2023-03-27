@@ -2,6 +2,8 @@ APP_NAME=app
 APP_CONTAINER_NAME=fastapi-app
 DB_NAME=db
 DB_CONTAINER_NAME=postgres-db
+FRONTEND_NAME=frontend
+FRONTEND_CONTAINER_NAME=react-frontend
 
 run:
 	docker compose up -d
@@ -24,6 +26,9 @@ logapp:
 logdb:
 	docker compose logs $(DB_NAME) -ft
 
+logfrontend:
+	docker compose logs $(FRONTEND_NAME) -ft
+
 restart:
 	docker compose restart
 
@@ -35,6 +40,9 @@ login-app:
 
 login-db:
 	docker exec -it $(DB_CONTAINER_NAME) psql -U postgres
+
+login-frontend:
+	docker exec -it $(FRONTEND_CONTAINER_NAME) /bin/bash
 
 # tests
 test:
