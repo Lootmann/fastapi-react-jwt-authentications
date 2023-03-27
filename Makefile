@@ -20,14 +20,14 @@ down:
 logs:
 	docker compose logs -ft
 
-logapp:
+logbackend:
 	docker compose logs $(APP_NAME) -ft
-
-logdb:
-	docker compose logs $(DB_NAME) -ft
 
 logfrontend:
 	docker compose logs $(FRONTEND_NAME) -ft
+
+logdb:
+	docker compose logs $(DB_NAME) -ft
 
 restart:
 	docker compose restart
@@ -35,7 +35,7 @@ restart:
 migrate:
 	docker compose exec $(APP_NAME) python3 -m api.db
 
-login-app:
+login-backend:
 	docker exec -it $(APP_CONTAINER_NAME) /bin/bash
 
 login-db:
