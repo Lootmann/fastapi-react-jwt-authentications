@@ -7,8 +7,8 @@ export function Signup() {
   const errors = useActionData() as UserFormErrorType;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl mb-4">Login Form</h2>
+    <div className="p-6 text-slate-200">
+      <h2 className="text-2xl mb-4">Signup Form</h2>
 
       <Form
         method="post"
@@ -18,7 +18,7 @@ export function Signup() {
           type="text"
           name="username"
           id="username"
-          className="bg-slate-800 text-slate-200 px-2 py-1 rounded-md outline-none"
+          className="bg-slate-800 px-2 py-1 rounded-md outline-none"
           placeholder="username"
           autoFocus
           autoComplete="off"
@@ -32,7 +32,7 @@ export function Signup() {
           name="password"
           id="password"
           placeholder="password"
-          className="bg-slate-800 text-slate-200 px-2 py-1 rounded-md outline-none"
+          className="bg-slate-800 px-2 py-1 rounded-md outline-none"
           autoComplete="off"
         />
         {errors?.password && (
@@ -42,7 +42,7 @@ export function Signup() {
         <input
           type="submit"
           value="+ Signup"
-          className="bg-slate-800 hover:bg-green-600 focus:bg-green-600 text-slate-200 hover:text-slate-800 focus:text-slate-800 px-2 py-1 rounded-md transition-all duration-200 outline-none"
+          className="bg-slate-800 hover:bg-green-600 focus:bg-green-600 hover:text-slate-800 focus:text-slate-800 px-2 py-1 rounded-md transition-all duration-200 outline-none"
         />
       </Form>
     </div>
