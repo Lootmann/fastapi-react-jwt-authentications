@@ -27,14 +27,18 @@ def verify_password(plain_password: str, hashed_password) -> bool:
 
 def create_access_token(username: str):
     # NOTE: payload's sub has username, this may cause security issue.
-    expire = datetime.utcnow() + timedelta(credential.access_token_expire_minutes)
+    expire = datetime.utcnow() + timedelta(
+        minutes=credential.access_token_expire_minutes
+    )
     data = {"sub": username, "exp": expire}
     return jwt.encode(data, credential.secret_key, algorithm=credential.algorithm)
 
 
 def create_refresh_token(username: str):
     # NOTE: payload's sub has username, this may cause security issue.
-    expire = datetime.utcnow() + timedelta(credential.refresh_token_expire_minutes)
+    expire = datetime.utcnow() + timedelta(
+        minutes=credential.refresh_token_expire_minutes
+    )
     data = {"sub": username, "exp": expire}
     return jwt.encode(data, credential.secret_key, algorithm=credential.algorithm)
 
