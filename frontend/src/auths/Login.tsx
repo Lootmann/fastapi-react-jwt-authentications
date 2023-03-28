@@ -1,7 +1,12 @@
 import axios from "axios";
-import React from "react";
-import { ActionFunctionArgs, Form, useActionData } from "react-router-dom";
 import { API_URL } from "../settings";
+import { setAccessToken, setRefreshToken } from "../apis/token";
+import {
+  ActionFunctionArgs,
+  Form,
+  redirect,
+  useActionData,
+} from "react-router-dom";
 
 // TODO: when logging is success, redirect app
 export function Login() {
@@ -82,7 +87,12 @@ export async function userLoginAction({ request }: ActionFunctionArgs) {
       console.log(resp.data);
 
       if (resp.status == 201) {
-        return resp;
+        // FIXME: set access_token and refresh_token to Cookie with HttpOnly
+        console.log(">>> success to login");
+
+        setAccessToken(resp.data.access_token);
+        setRefreshToken(resp.data.refresh_token);
+        return redirect("/app");
       } else {
         return errors;
       }
