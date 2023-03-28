@@ -27,7 +27,6 @@ def refresh_access_token(
     """
     # NOTE: check refresh token, when refresh is not expired, re-create access_token
     if auth_api.check_token(token.refresh_token):
-
         # NOTE: check_token already checked token has username
         username = auth_api.get_username(token.refresh_token)
 
@@ -59,6 +58,7 @@ def create_token(
     if not found:
         raise AuthException.raise401(detail="User Not Found")
 
+    # FIXME: this error message says 'A User exists, but I can't find
     if not auth_api.verify_password(form_data.password, found.password):
         raise AuthException.raise401(detail="username or password is invalid")
 
