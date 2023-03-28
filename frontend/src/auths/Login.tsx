@@ -1,5 +1,4 @@
-import axios from "axios";
-import { API_URL } from "../settings";
+import { axiosForm } from "../apis/axios";
 import { setAccessToken, setRefreshToken } from "../apis/token";
 import {
   ActionFunctionArgs,
@@ -80,12 +79,8 @@ export async function userLoginAction({ request }: ActionFunctionArgs) {
     return errors;
   }
 
-  return axios
-    .post(
-      API_URL + "/auth/token",
-      { username: username, password: password },
-      { headers: { "content-type": "application/x-www-form-urlencoded" } }
-    )
+  return axiosForm
+    .post("/auth/token", { username: username, password: password })
     .then((resp) => {
       console.log(resp);
       console.log(resp.data);

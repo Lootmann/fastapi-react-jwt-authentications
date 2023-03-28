@@ -1,7 +1,6 @@
-import axios from "axios";
-import React from "react";
 import { ActionFunctionArgs, Form, useActionData } from "react-router-dom";
 import { API_URL } from "../settings";
+import { axiosForm } from "../apis/axios";
 
 export function Signup() {
   const errors = useActionData() as AccountFormErrorType;
@@ -73,7 +72,7 @@ export async function userCreateAction({ request }: ActionFunctionArgs) {
   }
 
   //   TODO: create user
-  return await axios
+  return await axiosForm
     .post(API_URL + "/users", { username: username, password: password })
     .then((resp) => {
       console.log(resp);
