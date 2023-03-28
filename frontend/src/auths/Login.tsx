@@ -10,7 +10,7 @@ import {
 
 // TODO: when logging is success, redirect app
 export function Login() {
-  const errors = useActionData() as UserFormErrorType;
+  const errors = useActionData() as AccountFormErrorType;
 
   return (
     <div className="p-6">
@@ -62,7 +62,11 @@ export async function userLoginAction({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const username = formData.get("username");
   const password = formData.get("password");
-  const errors: UserFormErrorType = { username: "", password: "", message: "" };
+  const errors: AccountFormErrorType = {
+    username: "",
+    password: "",
+    message: "",
+  };
 
   if (typeof username != "string" || username.length < 5) {
     errors.username = "Username must be at least 5 chars long.";

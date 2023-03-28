@@ -4,7 +4,7 @@ import { ActionFunctionArgs, Form, useActionData } from "react-router-dom";
 import { API_URL } from "../settings";
 
 export function Signup() {
-  const errors = useActionData() as UserFormErrorType;
+  const errors = useActionData() as AccountFormErrorType;
 
   return (
     <div className="p-6 text-slate-200">
@@ -53,7 +53,11 @@ export async function userCreateAction({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const username = formData.get("username");
   const password = formData.get("password");
-  const errors: UserFormErrorType = { username: "", password: "", message: "" };
+  const errors: AccountFormErrorType = {
+    username: "",
+    password: "",
+    message: "",
+  };
 
   // TODO: validation formData
   if (typeof username != "string" || username.length < 5) {

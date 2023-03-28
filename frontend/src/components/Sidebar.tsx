@@ -20,6 +20,13 @@ export function Sidebar() {
         >
           Login
         </Link>
+
+        <Link
+          to={`/app`}
+          className="hover:bg-slate-300 hover:text-slate-900 px-2 rounded-md transition-all duration-150"
+        >
+          app
+        </Link>
       </div>
     </div>
   );
