@@ -16,3 +16,8 @@
 3. frontend:
   get access_token and refresh_token and store received tokens in Cookies with HttpOnly
 ```
+
+- login form
+  - when I find non-exist username, server returns response immediately
+  - when username is correct, but password is wrong, server returns reponse for a second.
+    - At least, we know that a user with that username exists!
