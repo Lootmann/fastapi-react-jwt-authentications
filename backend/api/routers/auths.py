@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session
@@ -67,7 +69,8 @@ def create_token(
     found = user_api.find_by_name(db, form_data.username)
 
     if not found:
-        raise AuthException.raise401(detail="User Not Found")
+        time.sleep(0.5)
+        raise AuthException.raise401(detail="username or password is invalid")
 
     # FIXME: this error message says 'A User exists, but I can't find
     if not auth_api.verify_password(form_data.password, found.password):

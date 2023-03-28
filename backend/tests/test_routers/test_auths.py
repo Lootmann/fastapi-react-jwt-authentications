@@ -48,7 +48,7 @@ class TestPostAuth:
             "/auth/token", data={"username": "hogehoge", "password": "newnew"}
         )
         assert resp.status_code == status.HTTP_401_UNAUTHORIZED
-        assert resp.json() == {"detail": "User Not Found"}
+        assert resp.json() == {"detail": "username or password is invalid"}
 
     def test_create_token_with_wrong_password(self, client: TestClient):
         resp = client.post(
