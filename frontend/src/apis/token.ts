@@ -7,6 +7,9 @@ export const getAccessToken = (): string | null => {
   return localStorage.getItem("accessToken");
 };
 
+// TODO: impl
+export const refreshAccessToken = () => {};
+
 export const setRefreshToken = (refreshToken: string) => {
   localStorage.setItem("refreshToken", refreshToken);
 };

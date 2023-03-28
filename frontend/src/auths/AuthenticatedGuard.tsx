@@ -1,30 +1,61 @@
-import axios from "../apis/axios";
-import React, { useEffect, useState } from "react";
-import { getAccessToken, getRefreshToken } from "../apis/token";
-import { redirect } from "react-router-dom";
+import React, { useEffect } from "react";
+import { axiosDefault } from "../apis/axios";
+import { getAccessToken, getRefreshToken, setAccessToken } from "../apis/token";
+import { useNavigate } from "react-router-dom";
 
 export function AuthenticatedGuard({ children }: any) {
-  const [users, setUsers] = useState<UserType[]>([]);
   const accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("/users", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((resp) => {
-        if (resp.status == 200) {
+    // FIXME: ugly
+    // FIXME: /src/apis/axios.ts
+    console.log(">>> AuthenticatedGuard.tsx useEffect");
+
+    const fetchUser = async () => {
+      await axiosDefault
+        .get("/users", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        .then((resp) => {
           console.log(resp);
           console.log(resp.data);
-          setUsers(resp.data);
-        }
-      })
-      .catch((error) => {
-        // TODO: redirect to Login Page
-        console.log(error);
-        redirect("/login");
-      });
+
+          if (resp.status == 200) {
+            console.log("* good");
+          } else {
+            // NOTE: something with wrong D:
+            navigate("/login");
+            return resp;
+          }
+        })
+        .catch((error) => {
+          // TODO: refresh Token
+          // NOTE: when 401 error, use refresh_token, get new access Token
+          console.log("* accessToken is expired ?");
+          const refreshToken = getRefreshToken();
+
+          if (refreshToken === null) {
+            navigate("/login");
+          }
+
+          axiosDefault
+            .post("/auth/refresh", { refresh_token: refreshToken })
+            .then((resp) => {
+              if (resp.status == 200) {
+                console.log("* refresh token");
+                setAccessToken(resp.data.access_token);
+              }
+            })
+            .catch((error) => {
+              console.log("* refresh error");
+              console.log(error);
+              navigate("/login");
+            });
+        });
+    };
+
+    fetchUser();
   }, []);
 
   return <>{children}</>;
