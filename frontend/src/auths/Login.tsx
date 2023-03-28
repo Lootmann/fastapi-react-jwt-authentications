@@ -9,12 +9,15 @@ export function Login() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl mb-4">Login Form</h2>
+      <h2 className="text-2xl text-slate-200 mb-4">Login Form</h2>
 
       <Form
         method="post"
         className="flex flex-col gap-4 p-4 text-2xl bg-slate-900 rounded-md"
       >
+        {errors?.message && (
+          <span className="text-red-600">{errors.message}</span>
+        )}
         <input
           type="text"
           name="username"
@@ -56,28 +59,39 @@ export async function userLoginAction({ request }: ActionFunctionArgs) {
   const password = formData.get("password");
   const errors: UserFormErrorType = { username: "", password: "", message: "" };
 
-  console.log(username, password);
+  if (typeof username != "string" || username.length < 5) {
+    errors.username = "Username must be at least 5 chars long.";
+  }
 
-  axios
+  if (typeof password != "string" || password.length < 5) {
+    errors.password = "Password must be at least 5 chars long.";
+  }
+
+  if (errors.username != "" || errors.password != "") {
+    return errors;
+  }
+
+  return axios
     .post(
       API_URL + "/auth/token",
-      { username: "", password: "" },
+      { username: username, password: password },
       { headers: { "content-type": "application/x-www-form-urlencoded" } }
     )
     .then((resp) => {
       console.log(resp);
       console.log(resp.data);
 
-      if (resp.status == 200) {
+      if (resp.status == 201) {
         return resp;
       } else {
-        return resp;
+        return errors;
       }
     })
     .catch((error) => {
+      // /auth/token raises 401
       console.log(error);
       console.log(error.request.response);
+      errors.message = error.request.response;
+      return errors;
     });
-
-  return errors;
 }
