@@ -53,6 +53,17 @@ def create_token(
     db: Session = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
+    """
+    OAuth2PasswordRequestForm dependencies "username" and "password"
+    when your post request does NOT have these body params, raise "HTTP_422 Unprocessable Entity"
+    """
+    # TODO: form_data vlidation
+    if len(form_data.username) < 5:
+        raise AuthException.raise401(detail="Username must be at least 5 chars long.")
+
+    if len(form_data.password) < 5:
+        raise AuthException.raise401(detail="Password must be at least 5 chars long.")
+
     found = user_api.find_by_name(db, form_data.username)
 
     if not found:
