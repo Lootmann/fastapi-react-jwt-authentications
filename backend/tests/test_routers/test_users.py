@@ -45,6 +45,15 @@ class TestGetUser:
 
         assert resp.status_code == status.HTTP_200_OK
 
+    def test_get_current_user(self, client: TestClient, login_fixture):
+        user, headers = login_fixture
+        resp = client.get("/users/me", headers=headers)
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert data["id"] == user.id
+        assert data["username"] == user.username
+
 
 class TestPostUser:
     def test_create_user(self, client: TestClient):
