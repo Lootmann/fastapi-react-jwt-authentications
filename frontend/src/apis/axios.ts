@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_URL } from "../settings";
-import { getAccessToken } from "./token";
+import { getAccessToken, getRefreshToken, setAccessToken } from "./token";
+import { redirect } from "react-router-dom";
 
 const axiosDefault = axios.create({
   baseURL: API_URL,
@@ -39,7 +40,7 @@ axiosWithToken.interceptors.request.use(
     return config;
   },
   (error) => {
-    Promise.reject(error);
+    return Promise.reject(error);
   }
 );
 
@@ -48,11 +49,42 @@ axiosWithToken.interceptors.response.use(
     return resp;
   },
   async function (error) {
-    // TODO: error
-    const originalRequest = error.config;
-    if (error.response.status == 403) {
+    console.log(error);
+
+    // status code 401 is unauthorized
+    if (error.response.status == 401) {
+      await refreshTokenFunction();
+      return axiosWithToken.request(error.config);
     }
+
+    return Promise.reject(error);
   }
 );
+
+async function refreshTokenFunction() {
+  const refreshToken = getRefreshToken();
+
+  // NOTE: user should login
+  if (refreshToken === null) {
+    return redirect("/login");
+  }
+
+  console.log(">>> axios.ts - axiousDefault");
+
+  axiosDefault
+    .post("/auth/refresh", { refresh_token: refreshToken })
+    .then((resp) => {
+      console.log("* try to ...");
+      if (resp.status == 200) {
+        console.log("* refresh token :^)");
+        setAccessToken(resp.data.access_token);
+      }
+    })
+    .catch((error) => {
+      console.log("* refresh token error D:");
+      console.log(error);
+      return Promise.reject(error);
+    });
+}
 
 export { axiosDefault, axiosForm, axiosWithToken };
