@@ -1,6 +1,12 @@
-import { ActionFunctionArgs, Form, useActionData } from "react-router-dom";
 import { API_URL } from "../settings";
-import { axiosForm } from "../apis/axios";
+import { axiosDefault, axiosForm } from "../apis/axios";
+import {
+  ActionFunctionArgs,
+  Form,
+  redirect,
+  useActionData,
+  useNavigate,
+} from "react-router-dom";
 
 export function Signup() {
   const errors = useActionData() as AccountFormErrorType;
@@ -71,17 +77,14 @@ export async function userCreateAction({ request }: ActionFunctionArgs) {
     return errors;
   }
 
-  //   TODO: create user
-  return await axiosForm
+  return await axiosDefault
     .post(API_URL + "/users", { username: username, password: password })
     .then((resp) => {
       console.log(resp);
       console.log(resp.data);
 
-      // good call
       if (resp.status == 201) {
-        // TODO: redirect to top page
-        return resp;
+        return redirect("/login");
       } else {
         // TODO: when is this happend?
         return resp;
