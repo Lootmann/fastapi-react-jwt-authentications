@@ -1,7 +1,13 @@
 import axios from "axios";
 import { API_URL } from "../settings";
-import { getAccessToken, getRefreshToken, setAccessToken } from "./token";
 import { redirect } from "react-router-dom";
+import {
+  getAccessToken,
+  getRefreshToken,
+  removeAccessToken,
+  removeRefreshToken,
+  setAccessToken,
+} from "./token";
 
 const axiosDefault = axios.create({
   baseURL: API_URL,
@@ -51,7 +57,7 @@ axiosWithToken.interceptors.response.use(
   async function (error) {
     console.log(error);
 
-    // status code 401 is unauthorized
+    // status code 401 is unauthorized - access token is expired
     if (error.response.status == 401) {
       await refreshTokenFunction();
       return axiosWithToken.request(error.config);
@@ -62,28 +68,30 @@ axiosWithToken.interceptors.response.use(
 );
 
 async function refreshTokenFunction() {
+  console.log(">>> axios.ts - axiousDefault");
+
   const refreshToken = getRefreshToken();
 
-  // NOTE: user should login
+  // NOTE: refreshToken is null means that you are not signed in
   if (refreshToken === null) {
-    return redirect("/login");
+    return redirect("/signup");
   }
-
-  console.log(">>> axios.ts - axiousDefault");
 
   axiosDefault
     .post("/auth/refresh", { refresh_token: refreshToken })
     .then((resp) => {
-      console.log("* try to ...");
       if (resp.status == 200) {
         console.log("* refresh token :^)");
         setAccessToken(resp.data.access_token);
       }
     })
     .catch((error) => {
+      // NOTE: server error, react redirect to signup
       console.log("* refresh token error D:");
       console.log(error);
-      return Promise.reject(error);
+      removeAccessToken();
+      removeRefreshToken();
+      return redirect("/signup");
     });
 }
 

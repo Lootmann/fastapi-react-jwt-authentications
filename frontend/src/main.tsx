@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import { Login, userLoginAction } from "./auths/Login";
 import { Main } from "./apps/Main";
 import { Signup, userCreateAction } from "./auths/Signup";
+import { Users } from "./apps/Users";
 import {
   createBrowserRouter,
   LoaderFunction,
@@ -28,8 +29,14 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/app",
+    path: "/",
     element: <Main />,
+    children: [
+      {
+        path: "/app",
+        element: <Users />,
+      },
+    ],
   },
 ]);
 
