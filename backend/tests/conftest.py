@@ -46,8 +46,8 @@ def login_fixture(client: TestClient, session: Session) -> Tuple[user_model.User
     user = user_model.User(
         username=username,
         password=auth_api.hashed_password(password),
-        refresh_token=auth_api.create_refresh_token(username),
     )
+
     session.add(user)
     session.commit()
     session.refresh(user)

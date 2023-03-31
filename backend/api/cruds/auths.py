@@ -101,8 +101,9 @@ def get_current_user(
             when header has not "Authorization", raise 401 No authorized
 
     Returns:
-        user_model.User: current logged in user
+        user_model.User: current logged-in user
     """
+    # TODO: I don't know why but oauth2_schema has access_token automatically ...
     # check only access_token
     if check_token(access_token):
         username = get_username(access_token)

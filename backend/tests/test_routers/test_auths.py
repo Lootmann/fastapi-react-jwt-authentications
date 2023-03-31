@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from jose import jwt
 
 from api.cruds import auths as auth_api
+from api.models import auths as auth_model
 from api.settings import Settings
 from tests.factory import random_string
 
@@ -106,14 +107,22 @@ class TestJWT:
 
 
 class TestRefreshToken:
-    def test_refresh_token(self, client: TestClient, login_fixture):
+    def test_refresh_token(self, client: TestClient):
         # header: {"Authorization": "Bearer_eyJ...."}
-        user, headers = login_fixture
+        username, password = random_string(), random_string()
+        client.post("/users", json={"username": username, "password": password})
 
-        # In login_fixture, time shifted by 1 sec with utcnow()
+        # get first tokens
+        resp = client.post(
+            "/auth/token", data={"username": username, "password": password}
+        )
+        old_token = auth_model.Token(**resp.json())
+
+        # generate new access_token
         time.sleep(1)
-        resp = client.post("/auth/refresh", json={"refresh_token": user.refresh_token})
+        client.cookies = {"refresh_token": old_token.refresh_token}
+        resp = client.post("/auth/refresh")
+        new_token = auth_model.RefreshAccessToken(**resp.json())
 
-        old_access_token = headers["Authorization"][:7]
-        new_access_token = resp.json()["access_token"]
-        assert old_access_token != new_access_token
+        # refresh access_token
+        assert old_token.access_token != new_token.access_token

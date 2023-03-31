@@ -7,13 +7,6 @@ class Token(SQLModel):
     token_type: str
 
 
-class TokenUser(SQLModel):
-    username: str
-
-
-class AccessToken(SQLModel):
+class RefreshAccessToken(SQLModel):
+    msg: str
     access_token: str
-
-
-class RefeshToken(SQLModel):
-    refresh_token: str

@@ -10,8 +10,6 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     password: str
-    # TODO: One of the implementation will not have refresh_token
-    refresh_token: str
 
 
 class UserCreate(UserBase):
