@@ -7,6 +7,8 @@ const axiosDefault = axios.create({
   baseURL: API_URL,
 });
 
+axiosDefault.defaults.withCredentials = true;
+
 /**
  * axiosForm
  *
@@ -71,17 +73,12 @@ async function refreshTokenFunction() {
   }
 
   axiosDefault
-    .post(
-      "/auth/refresh",
-      {},
-      {
-        withCredentials: true,
-        // BUG: Refused to set unsafe header Cookie
-        headers: {
-          Cookie: `refresh_token=${refreshToken}`,
-        },
-      }
-    )
+    .post("/auth/refresh", {
+      headers: {
+        Cookie: `refresh_token=${refreshToken}`,
+        "Content-Type": "application/json",
+      },
+    })
     .then((resp) => {
       if (resp.status == 200) {
         console.log("* refresh token :^)");
