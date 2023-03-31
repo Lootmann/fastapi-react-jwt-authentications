@@ -1,19 +1,13 @@
+import { ActionFunctionArgs, Form, useActionData } from "react-router-dom";
 import { axiosForm } from "../apis/axios";
-import { setAccessToken, setRefreshToken } from "../apis/token";
-import {
-  ActionFunctionArgs,
-  Form,
-  redirect,
-  useActionData,
-} from "react-router-dom";
+import { setToken } from "../apis/token";
 
-// TODO: when logging is success, redirect app
 export function Login() {
   const errors = useActionData() as AccountFormErrorType;
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl text-slate-200 mb-4">Login Form</h2>
+      <h2 className="text-2xl text-slate-200 mb-4">Login Form 😄</h2>
 
       <Form
         method="post"
@@ -79,19 +73,18 @@ export async function userLoginAction({ request }: ActionFunctionArgs) {
     return errors;
   }
 
-  return axiosForm
+  const resp = await axiosForm
     .post("/auth/token", { username: username, password: password })
     .then((resp) => {
       console.log(resp);
       console.log(resp.data);
 
       if (resp.status == 201) {
-        // FIXME: set access_token and refresh_token to Cookie with HttpOnly
         console.log(">>> success to login");
 
-        setAccessToken(resp.data.access_token);
-        setRefreshToken(resp.data.refresh_token);
-        return redirect("/app");
+        setToken("access_token", resp.data.access_token);
+        setToken("refresh_token", resp.data.refresh_token);
+        return true;
       } else {
         return errors;
       }
@@ -103,4 +96,9 @@ export async function userLoginAction({ request }: ActionFunctionArgs) {
       errors.message = error.request.response;
       return errors;
     });
+
+  if (resp == true) {
+    window.location.href = "/app";
+  }
+  return resp;
 }

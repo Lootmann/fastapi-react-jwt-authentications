@@ -1,19 +1,12 @@
 import axios from "axios";
 import { API_URL } from "../settings";
+import { getToken, removeToken, setToken } from "./token";
 import { redirect } from "react-router-dom";
-import {
-  getAccessToken,
-  getRefreshToken,
-  removeAccessToken,
-  removeRefreshToken,
-  setAccessToken,
-} from "./token";
 
 const axiosDefault = axios.create({
   baseURL: API_URL,
 });
 
-// TODO: axiosForm
 /**
  * axiosForm
  *
@@ -26,7 +19,6 @@ const axiosForm = axios.create({
 axiosForm.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
 
-// TODO: axiosWithToken
 /**
  * axiosWithToken
  *
@@ -38,7 +30,8 @@ const axiosWithToken = axios.create({
 
 axiosWithToken.interceptors.request.use(
   async (config) => {
-    const access_token = getAccessToken();
+    const access_token = getToken("access_token");
+
     config.headers = {
       Authorization: `Bearer ${access_token}`,
       "Content-Type": "application/x-www-form-urlencoded",
@@ -70,7 +63,7 @@ axiosWithToken.interceptors.response.use(
 async function refreshTokenFunction() {
   console.log(">>> axios.ts - axiousDefault");
 
-  const refreshToken = getRefreshToken();
+  const refreshToken = getToken("refresh_token");
 
   // NOTE: refreshToken is null means that you are not signed in
   if (refreshToken === null) {
@@ -78,19 +71,30 @@ async function refreshTokenFunction() {
   }
 
   axiosDefault
-    .post("/auth/refresh", { refresh_token: refreshToken })
+    .post(
+      "/auth/refresh",
+      {},
+      {
+        withCredentials: true,
+        // BUG: Refused to set unsafe header Cookie
+        headers: {
+          Cookie: `refresh_token=${refreshToken}`,
+        },
+      }
+    )
     .then((resp) => {
       if (resp.status == 200) {
         console.log("* refresh token :^)");
-        setAccessToken(resp.data.access_token);
+        setToken("access_token", resp.data.access_token);
       }
     })
     .catch((error) => {
       // NOTE: server error, react redirect to signup
       console.log("* refresh token error D:");
       console.log(error);
-      removeAccessToken();
-      removeRefreshToken();
+
+      removeToken("access_token");
+      removeToken("refresh_token");
       return redirect("/signup");
     });
 }

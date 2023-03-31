@@ -1,24 +1,13 @@
-// BUG: dont use these anywhere
-export const setAccessToken = (accessToken: string) => {
-  localStorage.setItem("accessToken", accessToken);
+import Cookies from "js-cookie";
+
+export const setToken = (key: string, value: string) => {
+  Cookies.set(key, value);
 };
 
-export const getAccessToken = (): string | null => {
-  return localStorage.getItem("accessToken");
+export const getToken = (key: string): string | undefined => {
+  return Cookies.get(key);
 };
 
-export const removeAccessToken = () => {
-  localStorage.removeItem("accessToken");
-};
-
-export const setRefreshToken = (refreshToken: string) => {
-  localStorage.setItem("refreshToken", refreshToken);
-};
-
-export const getRefreshToken = (): string | null => {
-  return localStorage.getItem("refreshToken");
-};
-
-export const removeRefreshToken = () => {
-  localStorage.removeItem("refreshToken");
+export const removeToken = (key: string) => {
+  Cookies.remove(key);
 };

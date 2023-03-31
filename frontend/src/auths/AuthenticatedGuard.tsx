@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { axiosWithToken } from "../apis/axios";
-import { getAccessToken, getRefreshToken } from "../apis/token";
+import { getToken } from "../apis/token";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -19,7 +19,11 @@ export function AuthenticatedGuard({ children }: any) {
   useEffect(() => {
     console.log("* AuthenticatedGuard");
 
-    const [refreshToken, accessToken] = [getRefreshToken(), getAccessToken()];
+    const [refreshToken, accessToken] = [
+      getToken("refresh_token"),
+      getToken("access_token"),
+    ];
+
     if (refreshToken === null || accessToken === null) {
       return navigate("/signup");
     }
